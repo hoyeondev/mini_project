@@ -59,7 +59,7 @@ cap = cv2.VideoCapture(0)
 if os.path.exists("baseline.jpg"):
     baseline_img = cv2.imread("baseline.jpg")
     # baseline 이미지도 ROI로 자르기
-    baseline_img = baseline_img[ROI_Y:ROI_Y + ROI_H, ROI_X:ROI_X + ROI_W]
+    # baseline_img = baseline_img[ROI_Y:ROI_Y + ROI_H, ROI_X:ROI_X + ROI_W]
 else:
     baseline_img = None
     print("baseline 이미지 없음. 'S'를 눌러 저장하세요.")
