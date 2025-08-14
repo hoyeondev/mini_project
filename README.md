@@ -1,4 +1,5 @@
 # 📌 스마트팩토리 포장지 불량 검사
+생산라인의 인공지능 영상 분석을 통한 불량 검사 프로젝트
 
 ## 1. 목표
 - 참고 : [가이드라인](https://docs.google.com/document/d/11St3DxbKel53c_lsmyGywFxLmrUMXbrFrW3sIzhtg8s/edit?tab=t.0)
@@ -9,4 +10,4 @@
 **1. [제품 체험 및 문제 발견](/docs/01-problem-discovery.md)**
 
 ## 진행상황
-- [0814 피드백진행](/feedback/feedback.md)
+- [0814 피드백진행](/feedback/0814.md)
