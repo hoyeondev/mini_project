@@ -2,13 +2,43 @@ import cv2
 import numpy as np
 import os
 
+def check_defect(baseline_img, current_img, threshold=30):
+    """
+    기준 이미지와 현재 이미지를 비교하여 불량 여부를 반환.
+    :param baseline_img: 기준 이미지 (BGR)
+    :param current_img: 현재 이미지 (BGR)
+    :param threshold: 평균 색상 차이 임계값
+    :return: (결과 텍스트, 차이 영상, 평균 차이 값)
+    """
+    # 크기 맞추기
+    current_resized = cv2.resize(current_img, (baseline_img.shape[1], baseline_img.shape[0]))
+
+    # HSV 변환
+    baseline_hsv = cv2.cvtColor(baseline_img, cv2.COLOR_BGR2HSV)
+    current_hsv = cv2.cvtColor(current_resized, cv2.COLOR_BGR2HSV)
+
+    # 절대 차이 계산
+    diff = cv2.absdiff(baseline_hsv, current_hsv)
+    diff_gray = cv2.cvtColor(diff, cv2.COLOR_BGR2GRAY)
+
+    # 차이 평균값
+    mean_diff = np.mean(diff_gray)
+
+    # 결과 판단
+    if mean_diff > threshold:
+        return "Defective", diff_gray, mean_diff
+    else:
+        return "Normal", diff_gray, mean_diff
+
+
+# =================== 메인 실행부 ===================
+
 # 웹캠 시작
 cap = cv2.VideoCapture(0)
 
 # baseline 이미지 불러오기
 if os.path.exists("baseline.jpg"):
     baseline_img = cv2.imread("baseline.jpg")
-    print("기존 baseline.jpg 불러옴")
 else:
     baseline_img = None
     print("baseline 이미지 없음. 'S'를 눌러 저장하세요.")
@@ -26,27 +56,13 @@ while cap.isOpened():
 
     # 기준 이미지가 있으면 비교
     if baseline_img is not None:
-        # 크기 맞추기
-        current_resized = cv2.resize(frame, (baseline_img.shape[1], baseline_img.shape[0]))
+        
+        result_text, diff_gray, mean_diff = check_defect(baseline_img, frame, THRESHOLD)
 
-        # HSV 변환
-        baseline_hsv = cv2.cvtColor(baseline_img, cv2.COLOR_BGR2HSV)
-        current_hsv = cv2.cvtColor(current_resized, cv2.COLOR_BGR2HSV)
-
-        # 절대 차이 계산
-        diff = cv2.absdiff(baseline_hsv, current_hsv)
-        diff_gray = cv2.cvtColor(diff, cv2.COLOR_BGR2GRAY)
-
-        # 차이 평균값
-        mean_diff = np.mean(diff_gray)
-
-        # 결과 판단
-        if mean_diff > THRESHOLD:
-            cv2.putText(display_frame, "Defective", (50, 50),
-                        cv2.FONT_HERSHEY_SIMPLEX, 1.2, (0, 0, 255), 3)
-        else:
-            cv2.putText(display_frame, "Normal", (50, 50),
-                        cv2.FONT_HERSHEY_SIMPLEX, 1.2, (0, 255, 0), 3)
+        # 결과 텍스트 표시
+        color = (0, 255, 0) if result_text == "Normal" else (0, 0, 255)
+        cv2.putText(display_frame, f"{result_text} ({mean_diff:.1f})", (50, 50),
+                    cv2.FONT_HERSHEY_SIMPLEX, 1.2, color, 3)
 
         # 차이 화면 표시
         cv2.imshow("Difference", diff_gray)
