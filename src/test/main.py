@@ -68,8 +68,8 @@ while cap.isOpened():
         cv2.imwrite("baseline.jpg", baseline_img)
         print("기준 이미지 저장 완료!")
 
-    # ESC → 종료
-    elif key == 27 :
+    # 종료
+    elif key == 27 or key == ord('q'):  # Esc 또는 q로 종료
         break
 
 cap.release()
