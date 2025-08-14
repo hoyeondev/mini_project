@@ -1,9 +1,17 @@
 import cv2
 import numpy as np
+import os
 
 # 웹캠 시작
 cap = cv2.VideoCapture(0)
-baseline_img = None  # 기준 이미지 저장 변수
+
+# baseline 이미지 불러오기
+if os.path.exists("baseline.jpg"):
+    baseline_img = cv2.imread("baseline.jpg")
+    print("기존 baseline.jpg 불러옴")
+else:
+    baseline_img = None
+    print("baseline 이미지 없음. 'S'를 눌러 저장하세요.")
 
 # 색상 차이 판단 기준값
 THRESHOLD = 30  # 평균 색상 차이 임계값
@@ -42,6 +50,13 @@ while cap.isOpened():
 
         # 차이 화면 표시
         cv2.imshow("Difference", diff_gray)
+    
+    else:
+        # 정상 기준 이미지 없을 경우
+        # 안내 메세지 출력
+        cv2.putText(display_frame, "Press 'S' to save baseline image", (50, 50),
+                    cv2.FONT_HERSHEY_SIMPLEX, 0.8, (255, 255, 0), 2)
+
 
     cv2.imshow("Packaging Check", display_frame)
 
@@ -54,7 +69,7 @@ while cap.isOpened():
         print("기준 이미지 저장 완료!")
 
     # ESC → 종료
-    elif key == 27:
+    elif key == 27 :
         break
 
 cap.release()
