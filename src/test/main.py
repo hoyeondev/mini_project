@@ -90,7 +90,7 @@ while cap.isOpened():
                     cv2.FONT_HERSHEY_SIMPLEX, 1.2, color, 3)
 
         # 차이 화면 표시
-        cv2.imshow("Difference", diff_gray)
+        # cv2.imshow("Difference", diff_gray)
     
     else:
         # 정상 기준 이미지 없을 경우
