@@ -6,4 +6,7 @@
 - 완벽한 결과물보다는 실용적인 문제 해결 과정과 협업을 통한 학습에 집중
 
 ## 2. 목차
-**1. [제품 체험 및 문제 발견](https://github.com/hoyeondev/mini_project/blob/main/250813.md)**
+**1. [제품 체험 및 문제 발견](/docs/01-problem-discovery.md)**
+
+## 진행상황
+- [0814 피드백진행](/feedback/feedback.md)
