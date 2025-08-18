@@ -1,7 +1,9 @@
 
 # 📌 제품 체험 및 문제 발견(250813)
 
-
+<details>
+<summary>내용보기 🔽</summary>
+  
 ## 1. 목표
 - 구체적 시나리오를 포함한 핵심 문제 1개 발견
 - 문제 발생 빈도 추정('매번', '가끔', '특정 상황에서')
@@ -39,10 +41,15 @@
   
 > <img width="500" height="600" alt="image" src="https://github.com/user-attachments/assets/5b8017e1-f7ad-4494-b290-cb3de158172c" />
 
+</details>
+
 ---
 
 # 📌 피드백을 기반으로 개선점 찾기(250814)
 
+<details>
+<summary>내용보기 🔽</summary>
+  
 ## 1. 불량 유형 분류의 범위 확장
 - 문제점
   - 현재 계획은 ‘찢어짐’, ‘인쇄 번짐’, ‘이물질’ 등 제한된 유형만 고려함.
@@ -64,3 +71,22 @@
 
   - 히트맵(Heatmap):
     - 날짜와 시간대별 불량 건수를 색상 강도로 표현해 패턴 파악.
+
+</details>
+
+---
+
+# 📌 현재 상태의 문제점 증명 및 해결책 찾기(250818)
+
+<details>
+<summary>내용보기 🔽</summary>
+
+## 1. 제품 인식 오작동
+- 문제점
+  - 정상/불량 체크 포인트가 없어서 프로그램이 시작되지마자 '불량'이라고 검출되는 문제
+- 개선 방안
+  - baseline과 형태가 비슷한 게 ROI에 들어왔을 때 "제품이 감지됨"으로 간주할 수 있도록 `cv2.matchTemplate` 라이브러리 사용
+  - baseline과 비슷한 형태가 ROI에 있다고 판단 → 검사 수행
+> <img width="1000" height="586" alt="image" src="https://github.com/user-attachments/assets/9bad2c89-9484-47e1-b2f8-5b3079ad38ba" />
+
+</details>
