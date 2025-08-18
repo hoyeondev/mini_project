@@ -1,6 +1,7 @@
 import cv2
 import numpy as np
 import os
+from datetime import datetime
 
 # Define ROI coordinates (adjust as needed)
 ROI_X, ROI_Y, ROI_W, ROI_H = 200, 150, 250, 150
@@ -79,6 +80,12 @@ while cap.isOpened():
             color = (0, 255, 0)
         elif result_text == "Defective":
             color = (0, 0, 255)
+
+            # ★ 불량 발생 시 txt 파일에 로그 기록
+            with open("defect_log.txt", "a", encoding="utf-8") as f:
+                now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+                f.write(f"{now}, MeanDiff={mean_diff:.2f}, Match={max_val:.2f}\n")
+                
         else:  # No product detected
             color = (255, 255, 0)
 
