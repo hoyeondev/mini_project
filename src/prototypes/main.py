@@ -45,8 +45,8 @@ else:
     baseline_img = None
     print("baseline 이미지 없음. 'S'를 눌러 저장하세요.")
 
-THRESHOLD = 30        # 평균 색상 차이 임계값
-MATCH_THRESHOLD = 0.7 # 템플릿 매칭 유사도 기준
+THRESHOLD = 20        # 평균 색상 차이 임계값
+MATCH_THRESHOLD = 0.4 # 템플릿 매칭 유사도 기준
 
 while cap.isOpened():
     ret, frame = cap.read()
