@@ -60,7 +60,11 @@ while cap.isOpened():
 
     if baseline_img is not None:
         # 템플릿 매칭으로 baseline과 유사도 확인
+        # TM_CCOEFF_NORMED는 정규화된 상관 계수를 이용해 두 이미지 패치의 유사도를 1에 가깝게 표현
+        # 1 → 완전히 동일, 0 → 무관함, -1 → 완전히 반대
         res = cv2.matchTemplate(current_product_img, baseline_img, cv2.TM_CCOEFF_NORMED)
+
+        # 최소값, 최대값, 최소값 위치, 최대값 위치
         _, max_val, _, _ = cv2.minMaxLoc(res)
 
         if max_val > MATCH_THRESHOLD:
