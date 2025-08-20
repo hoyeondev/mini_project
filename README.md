@@ -17,3 +17,4 @@
 - [0814 피드백 진행](/feedback/0814.md)
     - [피드백을 기반으로 개선점찾기](/docs/01-problem-discovery.md)
 - [0818 피드백 진행](/feedback/0818.md)
+- [0820 피드백 진행](/feedback/feedback_form.md)
