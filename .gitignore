@@ -1,2 +1,4 @@
 minivenv/
 src/test/*.jpg
+assets/img/
+model/
