@@ -13,6 +13,12 @@
 ## 2. 목차
 **1. [제품 체험 및 문제 발견](/docs/01-problem-discovery.md)**
 
+**2. 핵심 기능 설명**
+
+**3. 프로그램 실행**
+
 ## 3. 진행상황
 - [0814 피드백 진행](/feedback/0814.md)
     - [피드백을 기반으로 개선점찾기](/docs/01-problem-discovery.md)
+- [0818 피드백 진행](/feedback/0818.md)
+- [0820 피드백 진행](/feedback/feedback_form.md)
