@@ -2,3 +2,4 @@ minivenv/
 src/test/*.jpg
 assets/img/
 model/
+model_before/

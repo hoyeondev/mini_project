@@ -1,5 +1,9 @@
 import cv2
 from ultralytics import YOLO
+import time
+
+# yolo 모델 학습 커맨드
+# yolo detect train data=data.yaml model=yolov8n.pt epochs=50 imgsz=640
 
 # 1. YOLO 모델 불러오기
 model = YOLO("best.pt")   # 학습된 모델 경로 지정
@@ -15,19 +19,21 @@ if not cap.isOpened():
     print("웹캠을 열 수 없습니다.")
     exit()
 
-# @TODO : sleep 추가하기
+
 while True:
     ret, frame = cap.read()
     if not ret:
         break
-
+    
     frame = cv2.flip(frame, 1)  # 좌우 반전
+
+    # time.sleep(0.3)  # 프레임 속도 조절
 
     # ROI 영역 시각화 (파란색 박스)
     cv2.rectangle(frame, (ROI_X, ROI_Y), (ROI_X+ROI_W, ROI_Y+ROI_H), (255, 0, 0), 2)
 
     # 3. YOLO 추론
-    results = model(frame, conf=0.25)
+    results = model(frame, conf=0.5)
 
     annotated_frame = frame.copy()
 
