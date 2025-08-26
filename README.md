@@ -17,7 +17,7 @@
 
 **3. 프로그램 실행**
 
-**4. 기술적 학습 성과**
+**4. [기술적 학습 성과](/docs/03-technical-learning-outcomes.md)**
 
 ## 3. 진행상황
 - **[Daily log](/docs/02-daily-log.md)**
