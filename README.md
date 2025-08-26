@@ -17,8 +17,12 @@
 
 **3. 프로그램 실행**
 
+**4. 기술적 학습 성과**
+
 ## 3. 진행상황
-- [0814 피드백 진행](/feedback/0814.md)
-    - [피드백을 기반으로 개선점찾기](/docs/01-problem-discovery.md)
-- [0818 피드백 진행](/feedback/0818.md)
-- [0820 피드백 진행](/feedback/feedback_form.md)
+- **[Daily log](/docs/02-daily-log.md)**
+- **피드백**
+    - [0814 피드백 진행](/feedback/0814.md)
+        - [피드백을 기반으로 개선점찾기](/docs/01-problem-discovery.md)
+    - [0818 피드백 진행](/feedback/0818.md)
+    - [0820 피드백 진행](/feedback/feedback_form.md)
