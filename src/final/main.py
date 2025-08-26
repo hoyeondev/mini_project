@@ -34,7 +34,7 @@ while True:
     cv2.rectangle(frame, (ROI_X, ROI_Y), (ROI_X+ROI_W, ROI_Y+ROI_H), (255, 0, 0), 2)
 
     # 3. YOLO 추론
-    results = model(frame, conf=0.5)
+    results = model(frame, conf=0.7)
     annotated_frame = frame.copy()
 
     # 4. 탐지 결과 필터링 (ROI 내부만)
