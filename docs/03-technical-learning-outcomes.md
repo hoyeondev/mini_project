@@ -42,7 +42,23 @@
     - roboflow 프로젝트 방식 instance segmentation으로 변경
     - yolo 학습 모델 변경 (`yolov8n.pt` → `yolov8n-seg.pt`)
     
-- **해결 결과** : 
+- **해결 결과** :
+> #### 해결 전
+> <img width="315" height="307" alt="image" src="https://github.com/user-attachments/assets/14cd3abe-82cd-4cc5-8ae7-11f7095eb82e" />
+>
+> roi 영역에 결함 제품이 있음에도 아무것도 인식하지 못하는 상태
+
+
+> #### 해결 후
+> <div>
+> <p align="center">
+> <img width="250" height="309" alt="image" src="https://github.com/user-attachments/assets/f4bff39a-ceed-4d75-8ee0-cf316ce804fe" />
+> <img width="250" height="309" alt="image" src="https://github.com/user-attachments/assets/9f7cc4fe-e0f6-4a18-9a11-da2a401144c5" />
+> <img width="250" height="309" alt="image" src="https://github.com/user-attachments/assets/88cb9898-b016-4543-91b9-6317d8f9767c" />
+> </p>
+> </div>
+> roboflow에서 학습한 내용대로 tearing, contaminated, normal을 정상적으로 분류하고 있는 모습
+
 - **학습한 내용** : 
 
 
