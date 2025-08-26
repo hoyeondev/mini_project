@@ -4,6 +4,7 @@ import time
 
 # yolo 모델 학습 커맨드
 # yolo detect train data=data.yaml model=yolov8n.pt epochs=50 imgsz=640
+# yolo detect train data=data.yaml model=yolov8n-seg.pt epochs=100 imgsz=640
 
 # 1. YOLO 모델 불러오기
 model = YOLO("best.pt")   # 학습된 모델 경로 지정
@@ -34,7 +35,6 @@ while True:
 
     # 3. YOLO 추론
     results = model(frame, conf=0.5)
-
     annotated_frame = frame.copy()
 
     # 4. 탐지 결과 필터링 (ROI 내부만)
