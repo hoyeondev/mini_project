@@ -47,7 +47,7 @@ def show_defect_log():
     except Exception as e:
         print("Error reading defect_log.txt:", e)
 
-btn = ttk.Button(root, text="Show Defect Log", command=show_defect_log)
+btn = ttk.Button(root, text="Show Defect Log", command=show_defect_log, takefocus=0)
 btn.pack(pady=10)
 
 # ======= 프레임 처리 함수 =======
