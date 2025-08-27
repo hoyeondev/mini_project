@@ -35,7 +35,7 @@ while True:
 
     # ROI 영역 시각화 (파란색 박스)
     cv2.rectangle(frame, (ROI_X, ROI_Y), (ROI_X+ROI_W, ROI_Y+ROI_H), (255, 0, 0), 2)
-    cv2.putText(annotated_frame, info_text, (10,30), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (255,255,0), 2)
+    cv2.putText(frame, info_text, (10,30), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (255,255,0), 2)
 
     # 3. YOLO 추론
     results = model(frame, conf=0.7)
@@ -74,6 +74,17 @@ while True:
         with open("defect_log.txt", "a", encoding="utf-8") as f:
             f.write(f"{now}, Detected: {', '.join(detected_labels)}\n")
         print(f"Logged at {now}: {', '.join(detected_labels)}")
+
+        # 안내 메시지 표시
+        temp_text = f"Logged at {now}"
+        start_time = time.time()
+        while time.time() - start_time < 1:  # 1초 동안 표시
+            frame_display = frame.copy()  # 원본 프레임 복원
+            cv2.putText(frame_display, temp_text, (10, 60), cv2.FONT_HERSHEY_SIMPLEX, 0.8, (0,255,255), 2)
+            cv2.imshow("Packaging Defect Inspection (ROI)", frame_display)
+            if cv2.waitKey(1) & 0xFF == 27:
+                break
+
 
 cap.release()
 cv2.destroyAllWindows()
