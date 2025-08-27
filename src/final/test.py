@@ -32,6 +32,9 @@ if not cap.isOpened():
 # 안내문구
 info_text = "Press SPACE to save current status to defect_log.txt"
 
+# 전역 변수로 탐지된 라벨 저장
+detected_labels = None
+
 # ======= 로그 표시 버튼 =======
 def show_defect_log():
     try:
@@ -49,6 +52,8 @@ btn.pack(pady=10)
 
 # ======= 프레임 처리 함수 =======
 def process_frame():
+    global detected_labels
+
     ret, frame = cap.read()
     if not ret:
         root.after(10, process_frame)
@@ -68,6 +73,7 @@ def process_frame():
         conf = float(result.conf[0])                # 신뢰도
         cls = int(result.cls[0])                   # 클래스 ID
         tag = model.names[cls]
+        detected_labels = tag + f"({conf:.2f})"
 
         # 바운딩 박스 중심 좌표
         cx = int((x1 + x2) / 2)
@@ -97,14 +103,13 @@ def process_frame():
 
 # ======= 스페이스바 로그 기록 =======
 def on_key(event):
-    global info_text
+    global info_text, detected_labels
     if event.keysym == "space":
         now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         
         # 결함 객체 결과 수집
-        # detected_labels = ["defect1(0.95)", "defect2(0.87)"]  
         with open("defect_log.txt", "a", encoding="utf-8") as f:
-            f.write(f"{now}, Detected: {', '.join(detected_labels)}\n")
+            f.write(f"{now}, {detected_labels}\n")
         # print(f"Logged at {now}: {', '.join(detected_labels)}")
 
         # 1초 동안 안내 메시지
