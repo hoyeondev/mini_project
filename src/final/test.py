@@ -1,4 +1,5 @@
 import cv2
+from ultralytics import YOLO
 import tkinter as tk
 from tkinter import ttk
 from PIL import Image, ImageTk
@@ -7,11 +8,10 @@ import pandas as pd
 from datetime import datetime
 
 # ======= YOLO 모델 불러오기 (예: ultralytics YOLOv8) =======
-# from ultralytics import YOLO
-# model = YOLO("best.pt")  
+model = YOLO("best.pt")  
 
 # ROI 좌표 예시 (x, y, w, h)
-ROI_X, ROI_Y, ROI_W, ROI_H = 100, 100, 300, 200
+ROI_X, ROI_Y, ROI_W, ROI_H = 200, 150, 300, 300
 
 # ======= Tkinter GUI 설정 =======
 root = tk.Tk()
@@ -21,11 +21,16 @@ root.title("Defect Detection")
 label = tk.Label(root)
 label.pack()
 
-# info_text 초기값
-info_text = "Press SPACE to log defect info"
 
 # 웹캠 초기화
 cap = cv2.VideoCapture(0)
+
+if not cap.isOpened():
+    print("웹캠을 열 수 없습니다.")
+    exit()
+
+# 안내문구
+info_text = "Press SPACE to save current status to defect_log.txt"
 
 # ======= 로그 표시 버튼 =======
 def show_defect_log():
@@ -50,20 +55,34 @@ def process_frame():
         return
 
     # ROI 표시
+    frame = cv2.flip(frame, 1)  # 좌우 반전
     cv2.rectangle(frame, (ROI_X, ROI_Y), (ROI_X+ROI_W, ROI_Y+ROI_H), (255,0,0), 2)
-
-    # YOLO 추론 (예시)
-    # results = model(frame)
-    # for b in results[0].boxes:
-    #     cls_id = int(b.cls[0])
-    #     conf = b.conf[0]
-    #     label = f"{model.names[cls_id]}({conf:.2f})"
-    #     x1, y1, x2, y2 = map(int, b.xyxy[0])
-    #     cv2.rectangle(frame, (x1,y1), (x2,y2), (0,255,0), 2)
-    #     cv2.putText(frame, label, (x1, y1-5), cv2.FONT_HERSHEY_SIMPLEX, 0.6, (0,255,0), 2)
-
-    # info_text 출력
     cv2.putText(frame, info_text, (10,30), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (255,255,0), 2)
+
+    # YOLO 추론
+    results = model(frame, conf=0.7)
+    annotated_frame = frame.copy()
+
+    for result in results[0].boxes:
+        x1, y1, x2, y2 = map(int, result.xyxy[0])  # 박스 좌표
+        conf = float(result.conf[0])                # 신뢰도
+        cls = int(result.cls[0])                   # 클래스 ID
+        tag = model.names[cls]
+
+        # 바운딩 박스 중심 좌표
+        cx = int((x1 + x2) / 2)
+        cy = int((y1 + y2) / 2)
+
+        # ROI 내부에 있는지 확인
+        if ROI_X <= cx <= ROI_X+ROI_W and ROI_Y <= cy <= ROI_Y+ROI_H:
+            # ROI 내부라면 박스 표시
+            cv2.rectangle(annotated_frame, (x1, y1), (x2, y2), (0, 255, 0), 2)
+            cv2.putText(annotated_frame, f"{tag} {conf:.2f}", 
+                        (x1, y1 - 10), cv2.FONT_HERSHEY_SIMPLEX, 
+                        0.6, (0, 255, 0), 2)
+
+    # 결과 화면 출력
+    cv2.imshow("Packaging Defect Inspection (ROI)", annotated_frame)
 
     # OpenCV BGR -> RGB 변환
     cv2image = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
@@ -88,7 +107,7 @@ def on_key(event):
         print(f"Logged at {now}: {', '.join(detected_labels)}")
 
         # 2초 동안 안내 메시지
-        temp_text = "저장이 완료되었습니다"
+        temp_text = "Logged at {now}"
         info_text = temp_text
         root.after(2000, lambda: restore_info_text())
 
