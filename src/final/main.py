@@ -6,6 +6,8 @@ from PIL import Image, ImageTk
 import matplotlib.pyplot as plt
 import pandas as pd
 from datetime import datetime
+import subprocess
+import webbrowser
 
 # yolo 모델 학습 커맨드
 # yolo detect train data=data.yaml model=yolov8n.pt epochs=50 imgsz=640
@@ -40,16 +42,27 @@ info_text = "Press SPACE to save current status to defect_log.txt"
 detected_labels = None
 
 # ======= 로그 표시 버튼 =======
+# def show_defect_log():
+#     try:
+#         df = pd.read_csv("defect_log.txt", header=None, names=["Timestamp", "Detected"])
+#         plt.figure(figsize=(8,5))
+#         plt.title("Defect Log")
+#         plt.axis('off')
+#         plt.table(cellText=df.values, colLabels=df.columns, loc='center')
+#         plt.show()
+#     except Exception as e:
+#         print("Error reading defect_log.txt:", e)
+
+# btn = ttk.Button(root, text="Show Defect Log", command=show_defect_log, takefocus=0)
+# btn.pack(pady=10)
+
+flask_process = None
 def show_defect_log():
-    try:
-        df = pd.read_csv("defect_log.txt", header=None, names=["Timestamp", "Detected"])
-        plt.figure(figsize=(8,5))
-        plt.title("Defect Log")
-        plt.axis('off')
-        plt.table(cellText=df.values, colLabels=df.columns, loc='center')
-        plt.show()
-    except Exception as e:
-        print("Error reading defect_log.txt:", e)
+    global flask_process
+    if flask_process is None or flask_process.poll() is not None:
+        # Flask 서버 실행 (flask_app.py)
+        flask_process = subprocess.Popen(["python", "flask_app.py"])
+    webbrowser.open("http://127.0.0.1:5000/log")
 
 btn = ttk.Button(root, text="Show Defect Log", command=show_defect_log, takefocus=0)
 btn.pack(pady=10)
@@ -69,7 +82,8 @@ def process_frame():
     cv2.putText(frame, info_text, (10,30), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (255,255,0), 2)
 
     # YOLO 추론
-    results = model(frame, conf=0.7)
+    # verbose 옵션을 False로 설정하여 불필요한 출력 방지
+    results = model(frame, conf=0.7, verbose=False)
     annotated_frame = frame.copy()
 
     for result in results[0].boxes:
