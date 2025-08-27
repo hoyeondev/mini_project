@@ -82,10 +82,10 @@ def process_frame():
                         0.6, (0, 255, 0), 2)
 
     # 결과 화면 출력
-    cv2.imshow("Packaging Defect Inspection (ROI)", annotated_frame)
+    # cv2.imshow("Packaging Defect Inspection (ROI)", annotated_frame)
 
     # OpenCV BGR -> RGB 변환
-    cv2image = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+    cv2image = cv2.cvtColor(annotated_frame, cv2.COLOR_BGR2RGB)
     img = Image.fromarray(cv2image)
     imgtk = ImageTk.PhotoImage(image=img)
 
@@ -100,20 +100,21 @@ def on_key(event):
     global info_text
     if event.keysym == "space":
         now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-        # 예시: YOLO 결과 라벨 리스트
-        detected_labels = ["defect1(0.95)", "defect2(0.87)"]  
+        
+        # 결함 객체 결과 수집
+        # detected_labels = ["defect1(0.95)", "defect2(0.87)"]  
         with open("defect_log.txt", "a", encoding="utf-8") as f:
             f.write(f"{now}, Detected: {', '.join(detected_labels)}\n")
-        print(f"Logged at {now}: {', '.join(detected_labels)}")
+        # print(f"Logged at {now}: {', '.join(detected_labels)}")
 
-        # 2초 동안 안내 메시지
-        temp_text = "Logged at {now}"
+        # 1초 동안 안내 메시지
+        temp_text = f"Logged at {now}"
         info_text = temp_text
-        root.after(2000, lambda: restore_info_text())
+        root.after(1000, lambda: restore_info_text())
 
 def restore_info_text():
     global info_text
-    info_text = "Press SPACE to log defect info"
+    info_text = "Press SPACE to save current status to defect_log.txt"
 
 root.bind("<Key>", on_key)
 
