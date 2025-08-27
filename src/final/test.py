@@ -1,0 +1,106 @@
+import cv2
+import tkinter as tk
+from tkinter import ttk
+from PIL import Image, ImageTk
+import matplotlib.pyplot as plt
+import pandas as pd
+from datetime import datetime
+
+# ======= YOLO 모델 불러오기 (예: ultralytics YOLOv8) =======
+# from ultralytics import YOLO
+# model = YOLO("best.pt")  
+
+# ROI 좌표 예시 (x, y, w, h)
+ROI_X, ROI_Y, ROI_W, ROI_H = 100, 100, 300, 200
+
+# ======= Tkinter GUI 설정 =======
+root = tk.Tk()
+root.title("Defect Detection")
+
+# 영상 표시 레이블
+label = tk.Label(root)
+label.pack()
+
+# info_text 초기값
+info_text = "Press SPACE to log defect info"
+
+# 웹캠 초기화
+cap = cv2.VideoCapture(0)
+
+# ======= 로그 표시 버튼 =======
+def show_defect_log():
+    try:
+        df = pd.read_csv("defect_log.txt", header=None, names=["Timestamp", "Detected"])
+        plt.figure(figsize=(8,5))
+        plt.title("Defect Log")
+        plt.axis('off')
+        plt.table(cellText=df.values, colLabels=df.columns, loc='center')
+        plt.show()
+    except Exception as e:
+        print("Error reading defect_log.txt:", e)
+
+btn = ttk.Button(root, text="Show Defect Log", command=show_defect_log)
+btn.pack(pady=10)
+
+# ======= 프레임 처리 함수 =======
+def process_frame():
+    ret, frame = cap.read()
+    if not ret:
+        root.after(10, process_frame)
+        return
+
+    # ROI 표시
+    cv2.rectangle(frame, (ROI_X, ROI_Y), (ROI_X+ROI_W, ROI_Y+ROI_H), (255,0,0), 2)
+
+    # YOLO 추론 (예시)
+    # results = model(frame)
+    # for b in results[0].boxes:
+    #     cls_id = int(b.cls[0])
+    #     conf = b.conf[0]
+    #     label = f"{model.names[cls_id]}({conf:.2f})"
+    #     x1, y1, x2, y2 = map(int, b.xyxy[0])
+    #     cv2.rectangle(frame, (x1,y1), (x2,y2), (0,255,0), 2)
+    #     cv2.putText(frame, label, (x1, y1-5), cv2.FONT_HERSHEY_SIMPLEX, 0.6, (0,255,0), 2)
+
+    # info_text 출력
+    cv2.putText(frame, info_text, (10,30), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (255,255,0), 2)
+
+    # OpenCV BGR -> RGB 변환
+    cv2image = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+    img = Image.fromarray(cv2image)
+    imgtk = ImageTk.PhotoImage(image=img)
+
+    # Tkinter 레이블 업데이트
+    label.imgtk = imgtk
+    label.configure(image=imgtk)
+
+    root.after(10, process_frame)  # 약 100FPS 갱신
+
+# ======= 스페이스바 로그 기록 =======
+def on_key(event):
+    global info_text
+    if event.keysym == "space":
+        now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        # 예시: YOLO 결과 라벨 리스트
+        detected_labels = ["defect1(0.95)", "defect2(0.87)"]  
+        with open("defect_log.txt", "a", encoding="utf-8") as f:
+            f.write(f"{now}, Detected: {', '.join(detected_labels)}\n")
+        print(f"Logged at {now}: {', '.join(detected_labels)}")
+
+        # 2초 동안 안내 메시지
+        temp_text = "저장이 완료되었습니다"
+        info_text = temp_text
+        root.after(2000, lambda: restore_info_text())
+
+def restore_info_text():
+    global info_text
+    info_text = "Press SPACE to log defect info"
+
+root.bind("<Key>", on_key)
+
+# ======= 영상 처리 시작 =======
+process_frame()
+root.mainloop()
+
+cap.release()
+cv2.destroyAllWindows()
