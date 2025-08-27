@@ -1,5 +1,6 @@
 import cv2
 from ultralytics import YOLO
+from datetime import datetime
 import time
 
 # yolo 모델 학습 커맨드
@@ -20,6 +21,8 @@ if not cap.isOpened():
     print("웹캠을 열 수 없습니다.")
     exit()
 
+# 안내문구
+info_text = "Press SPACE to save current status to defect_log.txt"
 
 while True:
     ret, frame = cap.read()
@@ -32,6 +35,7 @@ while True:
 
     # ROI 영역 시각화 (파란색 박스)
     cv2.rectangle(frame, (ROI_X, ROI_Y), (ROI_X+ROI_W, ROI_Y+ROI_H), (255, 0, 0), 2)
+    cv2.putText(annotated_frame, info_text, (10,30), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (255,255,0), 2)
 
     # 3. YOLO 추론
     results = model(frame, conf=0.7)
@@ -59,10 +63,17 @@ while True:
     # 5. 결과 화면 출력
     cv2.imshow("Packaging Defect Inspection (ROI)", annotated_frame)
 
-    # 종료 키 설정
+    # 키 입력 처리
     key = cv2.waitKey(1) & 0xFF
-    if key == 27 or key == ord('q'):  # ESC 또는 q
+    if key == 27 or key == ord('q'):  # ESC 또는 q 종료
         break
+    elif key == 32:  # 스페이스바
+        # 현재 상태 기록
+        now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        detected_labels = [f"{model.names[int(b.cls[0])]}({b.conf[0]:.2f})" for b in results[0].boxes]
+        with open("defect_log.txt", "a", encoding="utf-8") as f:
+            f.write(f"{now}, Detected: {', '.join(detected_labels)}\n")
+        print(f"Logged at {now}: {', '.join(detected_labels)}")
 
 cap.release()
 cv2.destroyAllWindows()
