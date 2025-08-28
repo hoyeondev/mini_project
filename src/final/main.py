@@ -94,10 +94,18 @@ def process_frame():
         # ROI 내부에 있는지 확인
         if ROI_X <= cx <= ROI_X+ROI_W and ROI_Y <= cy <= ROI_Y+ROI_H:
             # ROI 내부라면 박스 표시
-            cv2.rectangle(annotated_frame, (x1, y1), (x2, y2), (0, 255, 0), 2)
+            # 클래스별 색상 지정
+            if tag == "contaminated":
+                rec_color = (255, 0, 255)   # 보라색 (BGR)
+            elif tag == "tearing":
+                rec_color = (0, 0, 255)     # 빨간색 (BGR)
+            else:
+                rec_color = (0, 255, 0)     # 기본 녹색 (BGR)
+            cv2.rectangle(annotated_frame, (x1, y1), (x2, y2), rec_color, 2)
+
             cv2.putText(annotated_frame, f"{tag} {conf:.2f}", 
                         (x1, y1 - 10), cv2.FONT_HERSHEY_SIMPLEX, 
-                        0.6, (0, 255, 0), 2)
+                        0.6, rec_color, 2)
 
     # 결과 화면 출력
     # cv2.imshow("Packaging Defect Inspection (ROI)", annotated_frame)
