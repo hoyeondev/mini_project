@@ -40,24 +40,14 @@ info_text = "Press SPACE to save current status to defect_log.txt"
 info_color = (255, 255, 0)
 
 # 전역 변수로 탐지된 라벨 저장
-detected_labels = None
+defected_labels = None
 
-# ======= 로그 표시 버튼 =======
-# def show_defect_log():
-#     try:
-#         df = pd.read_csv("defect_log.txt", header=None, names=["Timestamp", "Detected"])
-#         plt.figure(figsize=(8,5))
-#         plt.title("Defect Log")
-#         plt.axis('off')
-#         plt.table(cellText=df.values, colLabels=df.columns, loc='center')
-#         plt.show()
-#     except Exception as e:
-#         print("Error reading defect_log.txt:", e)
 
-# btn = ttk.Button(root, text="Show Defect Log", command=show_defect_log, takefocus=0)
-# btn.pack(pady=10)
+# ======= Flask 서버로 로그 표시 =======
 
+# 플라스크 서버 프로세스 관리 변수
 flask_process = None
+
 def show_defect_log():
     global flask_process
     if flask_process is None or flask_process.poll() is not None:
@@ -70,7 +60,7 @@ btn.pack(pady=10)
 
 # ======= 프레임 처리 함수 =======
 def process_frame():
-    global detected_labels
+    global defected_labels
 
     ret, frame = cap.read()
     if not ret:
@@ -87,12 +77,15 @@ def process_frame():
     results = model(frame, conf=0.7, verbose=False)
     annotated_frame = frame.copy()
 
+    defected_labels = None  # 매 프레임마다 초기화
+
     for result in results[0].boxes:
         x1, y1, x2, y2 = map(int, result.xyxy[0])  # 박스 좌표
         conf = float(result.conf[0])                # 신뢰도
         cls = int(result.cls[0])                   # 클래스 ID
         tag = model.names[cls]
-        detected_labels = tag + f"({conf:.2f})"
+        # print(tag)
+        defected_labels = tag + f"({conf:.2f})"
 
         # 바운딩 박스 중심 좌표
         cx = int((x1 + x2) / 2)
@@ -122,21 +115,27 @@ def process_frame():
 
 # ======= 스페이스바 로그 기록 =======
 def on_key(event):
-    global info_text, info_color, detected_labels
-    if event.keysym == "space":
-        now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-        
-        # 결함 객체 결과 수집
-        with open("defect_log.txt", "a", encoding="utf-8") as f:
-            f.write(f"{now}, {detected_labels}\n")
-        # print(f"Logged at {now}: {', '.join(detected_labels)}")
+    global info_text, info_color, defected_labels
 
-        # 1초 동안 안내 메시지
-        temp_text = f"Logged at {now}"
-        info_text = temp_text
-        # 초록색으로 변경
-        info_color = (0, 255, 0)
-        root.after(1000, lambda: restore_info_text())
+    # 스페이스 키 누르면 기록
+    # defected_labels가 None이 아닐 때, normal 아닐 때만 기록
+    if event.keysym == "space":
+        if defected_labels is not None and "normal" not in defected_labels.lower():
+            now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+
+            # 결함 객체 결과 수집
+            with open("defect_log.txt", "a", encoding="utf-8") as f:
+                f.write(f"{now}, {defected_labels}\n")
+
+            defected_labels = None  # 기록 후 초기화
+
+
+            # 1초 동안 안내 메시지
+            temp_text = f"Logged at {now}"
+            info_text = temp_text
+            # 초록색으로 변경
+            info_color = (0, 255, 0)
+            root.after(1000, lambda: restore_info_text())
 
 def restore_info_text():
     global info_text, info_color
