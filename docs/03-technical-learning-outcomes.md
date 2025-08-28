@@ -70,8 +70,8 @@
 > #### 해결 후
 > <div>
 > <p align="center">
-> <img width="250" height="309" alt="image" src="https://github.com/user-attachments/assets/f4bff39a-ceed-4d75-8ee0-cf316ce804fe" />
-> <img width="250" height="309" alt="image" src="https://github.com/user-attachments/assets/9f7cc4fe-e0f6-4a18-9a11-da2a401144c5" />
+> <img width="250" height="309" alt="image" src="https://github.com/user-attachments/assets/f69c84bb-d423-44da-879d-a5771c51d7e0" />
+> <img width="250" height="309" alt="image" src="https://github.com/user-attachments/assets/d77ec426-fdce-477a-9d89-a8d7a94dd9c6" />
 > <img width="250" height="309" alt="image" src="https://github.com/user-attachments/assets/88cb9898-b016-4543-91b9-6317d8f9767c" />
 > </p>
 > </div>
