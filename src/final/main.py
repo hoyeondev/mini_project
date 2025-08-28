@@ -24,8 +24,8 @@ root = tk.Tk()
 root.title("Defect Detection")
 
 # 영상 표시 레이블
-label = tk.Label(root)
-label.pack()
+tk_label = tk.Label(root)
+tk_label.pack()
 
 
 # 웹캠 초기화
@@ -37,6 +37,7 @@ if not cap.isOpened():
 
 # 안내문구
 info_text = "Press SPACE to save current status to defect_log.txt"
+info_color = (255, 255, 0)
 
 # 전역 변수로 탐지된 라벨 저장
 detected_labels = None
@@ -79,7 +80,7 @@ def process_frame():
     # ROI 표시
     frame = cv2.flip(frame, 1)  # 좌우 반전
     cv2.rectangle(frame, (ROI_X, ROI_Y), (ROI_X+ROI_W, ROI_Y+ROI_H), (255,0,0), 2)
-    cv2.putText(frame, info_text, (10,30), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (255,255,0), 2)
+    cv2.putText(frame, info_text, (10,30), cv2.FONT_HERSHEY_SIMPLEX, 0.7, info_color, 2)
 
     # YOLO 추론
     # verbose 옵션을 False로 설정하여 불필요한 출력 방지
@@ -114,14 +115,14 @@ def process_frame():
     imgtk = ImageTk.PhotoImage(image=img)
 
     # Tkinter 레이블 업데이트
-    label.imgtk = imgtk
-    label.configure(image=imgtk)
+    tk_label.imgtk = imgtk
+    tk_label.configure(image=imgtk)
 
     root.after(10, process_frame)  # 약 100FPS 갱신
 
 # ======= 스페이스바 로그 기록 =======
 def on_key(event):
-    global info_text, detected_labels
+    global info_text, info_color, detected_labels
     if event.keysym == "space":
         now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         
@@ -133,11 +134,14 @@ def on_key(event):
         # 1초 동안 안내 메시지
         temp_text = f"Logged at {now}"
         info_text = temp_text
+        # 초록색으로 변경
+        info_color = (0, 255, 0)
         root.after(1000, lambda: restore_info_text())
 
 def restore_info_text():
-    global info_text
+    global info_text, info_color
     info_text = "Press SPACE to save current status to defect_log.txt"
+    info_color = (255, 255, 0)
 
 root.bind("<Key>", on_key)
 
