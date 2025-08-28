@@ -41,20 +41,23 @@
     - yolo 학습 모델 선택이 잘못 되었나?
 
 - **시도한 해결 방법들** :
-    - roboflow
+    - **roboflow**
         - 데이터 셋 증강 처리 (밝기 조절, 회전, 기울기)
         - 라벨링 방식 변경
-            > ##### 정상 라벨과 불량 섹션을 함께 라벨링하는 방식에서 정상과 불량 데이터 각각 라벨링
-            >
-            >
-            >
+            > #### 정상 라벨과 불량 섹션을 함께 라벨링하는 방식에서 정상과 불량 데이터 각각 라벨링
+            > <div>
+            > <p align="center">
+            > <img width="45%" height="292" alt="image" src="https://github.com/user-attachments/assets/b3774a40-70cd-4677-a993-a32b8f2ed44f" />
+            > <img width="45%" height="292" alt="image" src="https://github.com/user-attachments/assets/076ef3c8-0c24-4a9c-b1f7-9a7670ff1861" />
+            > </p>
+            > </div>
         - 프로젝트 타입 변경 (`Object Detection` → `Instance Segmentation`)
         - 사진 데이터 변경
             - 인식률을 높이기 위해 과자 → 포스트잇으로 변경
-    - yolo
+    - **yolo**
         - 모델 변경(`yolov11n` → `yolov8n` → `yolov8n-seg`)
 - **최종 해결 방법** :
-    - roboflow 프로젝트 방식 instance segmentation으로 변경
+    - roboflow 프로젝트 방식 `instance segmentation`으로 변경
     - yolo 학습 모델 변경 (`yolov8n.pt` → `yolov8n-seg.pt`)
     
 - **해결 결과** :
