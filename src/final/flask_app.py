@@ -46,13 +46,41 @@ def create_daily_chart(df):
     
     # 일별 결함 타입별 집계
     daily_defects = df.groupby([df['timestamp'].dt.date, 'defect_type']).size().unstack(fill_value=0)
+
+    label_map = {
+        'tearing': 'tearing (찢어짐)',
+        'contaminated': 'contaminated (오염)',
+        'normal': 'normal (정상)',
+    }
+    color_map = {
+        'tearing (찢어짐)': "#F39F9F",       
+        'contaminated (오염)': "#B8AECF",    
+        'normal (정상)': "#D2F8D1"          
+    }
+    daily_defects = daily_defects.rename(columns=label_map)
+
+    # 컬럼 순서 변경
+    desired_order = ['normal (정상)', 'contaminated (오염)', 'tearing (찢어짐)']
+    daily_defects = daily_defects[desired_order]
     
     # 스택 바 차트
-    ax = daily_defects.plot(kind='bar', stacked=True, figsize=(12, 6), colormap='Set3')
-    plt.title('일자별 불량 차트(최근 7일)', fontsize=16, fontweight='bold')
+    ax = daily_defects.plot(kind='bar', stacked=True, figsize=(12, 6), color=[color_map[col] for col in daily_defects.columns])
+    # 막대 안에 count 표시
+    for container in ax.containers:
+        for bar in container:
+            height = bar.get_height()
+            if height > 0:  # 0이면 표시 안 함
+                ax.text(
+                    bar.get_x() + bar.get_width()/2,  # 막대 중앙
+                    bar.get_y() + height/2,           # 스택 중앙
+                    str(int(height)),                  # 텍스트
+                    ha='center', va='center', fontsize=10, color='black'
+                )
+
+    plt.title('일자별 검사 차트(최근 7일)', fontsize=16, fontweight='bold')
     plt.xlabel('일자', fontsize=12)
-    plt.ylabel('불량 수', fontsize=12)
-    plt.legend(title='불량 유형', bbox_to_anchor=(1.05, 1), loc='upper left')
+    plt.ylabel('검사 수', fontsize=12)
+    plt.legend(title='유형', bbox_to_anchor=(1.05, 1), loc='upper left')
     plt.xticks(rotation=45)
     plt.tight_layout()
     
@@ -70,11 +98,25 @@ def create_defect_type_pie_chart(df):
     plt.figure(figsize=(8, 8))
     
     defect_counts = df['defect_type'].value_counts()
-    colors = plt.cm.Set3(range(len(defect_counts)))
-    
-    plt.pie(defect_counts.values, labels=defect_counts.index, autopct='%1.1f%%', 
+    # colors = plt.cm.Set3(range(len(defect_counts)))
+
+    label_map = {
+        'tearing': 'tearing (찢어짐)',
+        'contaminated': 'contaminated (오염)',
+        'normal': 'normal (정상)',
+    }
+    labels_mapped = [label_map[label] for label in defect_counts.index]
+
+    color_map = {
+        'tearing (찢어짐)': "#F39F9F",       
+        'contaminated (오염)': "#B8AECF",    
+        'normal (정상)': "#D2F8D1"          
+    }
+    colors = [color_map[label] for label in labels_mapped]
+
+    plt.pie(defect_counts.values, labels=labels_mapped, autopct='%1.1f%%', 
             colors=colors, startangle=90)
-    plt.title('불량 유형별 통계 (최근 7일)', fontsize=16, fontweight='bold')
+    plt.title('검사 유형별 통계 (최근 7일)', fontsize=16, fontweight='bold')
     plt.axis('equal')
     plt.tight_layout()
     
@@ -106,10 +148,15 @@ def dashboard():
             return render_error("최근 7일간의 데이터가 없습니다.")
         
         # 통계 계산
-        total_defects = len(df_recent)
-        today_defects = len(df_recent[df_recent['timestamp'].dt.date == today.date()])
-        defect_types = df_recent['defect_type'].nunique()
-        avg_confidence = df_recent['confidence'].mean()
+        # total_defects = len(df_recent)
+        # today_defects = len(df_recent[df_recent['timestamp'].dt.date == today.date()])
+        # defect_types = df_recent['defect_type'].nunique()
+        # avg_confidence = df_recent['confidence'].mean()
+        total_defects = len(df_recent[df_recent['defect_type'] != 'normal'])
+        today_defects = len(df_recent[(df_recent['timestamp'].dt.date == today.date()) & 
+                                    (df_recent['defect_type'] != 'normal')])
+        defect_types = df_recent[df_recent['defect_type'] != 'normal']['defect_type'].nunique()
+        avg_confidence = df_recent[df_recent['defect_type'] != 'normal']['confidence'].mean()
         
         # 차트 생성
         daily_chart = create_daily_chart(df_recent)

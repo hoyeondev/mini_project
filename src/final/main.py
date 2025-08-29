@@ -126,9 +126,9 @@ def on_key(event):
     global info_text, info_color, defected_labels
 
     # 스페이스 키 누르면 기록
-    # defected_labels가 None이 아닐 때, normal 아닐 때만 기록
+    # defected_labels가 None이 아닐 때
     if event.keysym == "space":
-        if defected_labels is not None and "normal" not in defected_labels.lower():
+        if defected_labels is not None:
             now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
             # 결함 객체 결과 수집
