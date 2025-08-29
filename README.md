@@ -71,10 +71,73 @@
 
 ## 5. 프로그램 실행
 
-#### 프로그램 동작 흐름
+#### 5.1 프로그램 동작 흐름
 ```mermaid
 flowchart TD
     A["📦 Roboflow에서 데이터 수집 및 어노테이션<br/>data.yaml 생성"] --> B["🧠 YOLO 모델 학습<br/>best.pt 생성"]
     B --> C["📷 실시간 불량 검사<br/>YOLO Inference 적용"]
     C --> D["📊 대시보드 시각화<br/>Flask + Matplotlib"]
 ```
+
+#### 5.2. 실시간 불량 검사
+- 웹캠 연결 및 영상 입력
+- YOLO 추론(Inference) 수행
+- 결과(바운딩 박스, 라벨) 화면 표시
+    > <img width="1384" height="866" alt="image" src="https://github.com/user-attachments/assets/f6e58abc-f3ac-4eef-81ed-acd18cd7055e" />
+
+
+#### 5.3. 로그 저장
+- 불량 검출 시 텍스트 로그(`defect_log.txt`) 기록
+- 발생 시간, 불량 유형 저장
+- 로그 기록시 안내 메세지 화면에 출력
+    > <img width="467" height="47" alt="image" src="https://github.com/user-attachments/assets/03838c1e-7f26-43b6-91a8-45d7ef4fb039" />
+
+
+#### 5.4. 대시보드 실행
+- Flask 서버 실행
+- 실시간 통계 데이터 전달
+- Matplotlib 그래프(일별 추이, 유형별 분포) 시각화
+  > <img width="1000" height="600" alt="image" src="https://github.com/user-attachments/assets/144bd428-4f71-4a2e-a69e-2e9988d2037f" />
+
+- 불량 유형 데이터 확인
+  > <img width="400" height="450" alt="image" src="https://github.com/user-attachments/assets/034f3b8f-bfb1-46aa-b94a-3af5a6102399" />
+
+
+#### 5.5 실행방법
+```bash
+# 가상환경 생성
+python -m venv minivenv
+
+# 가상환경 실행
+source minivenv/Scripts/activate
+
+# pip 패키지 다운로드
+# requirements.txt에 저장된 패키지 다운로드 명령어
+pip install -r requirements.txt
+
+# 프로그램 실행
+python main.py
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
