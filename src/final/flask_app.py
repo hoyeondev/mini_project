@@ -9,8 +9,8 @@ import re
 
 app = Flask(__name__)
 
-# 한글 폰트 설정 (시스템에 맞게 조정)
-plt.rcParams['font.family'] = ['DejaVu Sans', 'Arial Unicode MS', 'AppleGothic', 'Malgun Gothic']
+# 폰트 설정
+plt.rcParams['font.family'] = ['sans-serif', 'Malgun Gothic']
 plt.rcParams['axes.unicode_minus'] = False
 
 def parse_defect_data(file_path):
@@ -49,10 +49,10 @@ def create_daily_chart(df):
     
     # 스택 바 차트
     ax = daily_defects.plot(kind='bar', stacked=True, figsize=(12, 6), colormap='Set3')
-    plt.title('Daily Defects by Type (Last 7 Days)', fontsize=16, fontweight='bold')
-    plt.xlabel('Date', fontsize=12)
-    plt.ylabel('Number of Defects', fontsize=12)
-    plt.legend(title='Defect Type', bbox_to_anchor=(1.05, 1), loc='upper left')
+    plt.title('일자별 불량 차트(최근 7일)', fontsize=16, fontweight='bold')
+    plt.xlabel('일자', fontsize=12)
+    plt.ylabel('불량 수', fontsize=12)
+    plt.legend(title='불량 유형', bbox_to_anchor=(1.05, 1), loc='upper left')
     plt.xticks(rotation=45)
     plt.tight_layout()
     
@@ -74,7 +74,7 @@ def create_defect_type_pie_chart(df):
     
     plt.pie(defect_counts.values, labels=defect_counts.index, autopct='%1.1f%%', 
             colors=colors, startangle=90)
-    plt.title('Defect Distribution by Type (Last 7 Days)', fontsize=16, fontweight='bold')
+    plt.title('불량 유형별 통계 (최근 7일)', fontsize=16, fontweight='bold')
     plt.axis('equal')
     plt.tight_layout()
     
@@ -103,7 +103,7 @@ def dashboard():
         df_recent = df[df['timestamp'] >= seven_days_ago].copy()
         
         if df_recent.empty:
-            return render_error("No data found for the last 7 days")
+            return render_error("최근 7일간의 데이터가 없습니다.")
         
         # 통계 계산
         total_defects = len(df_recent)

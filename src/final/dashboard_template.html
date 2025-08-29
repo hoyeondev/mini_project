@@ -7,6 +7,12 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&display=swap');
+
+        body {
+            background-color: #f8f9fa;
+            font-family: 'Noto Sans KR', sans-serif;
+        }
         .dashboard-header {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
@@ -44,11 +50,12 @@
             <div class="row align-items-center">
                 <div class="col-md-6">
                     <h1><i class="fas fa-chart-line me-3"></i>Defect Detection Dashboard</h1>
-                    <p class="mb-0">Real-time quality monitoring system</p>
+                    <!-- <p class="mb-0">Real-time quality monitoring system</p> -->
+                    <p class="mb-0">실시간 모니터링 시스템</p>
                 </div>
                 <div class="col-md-6 text-md-end">
                     <h4><i class="fas fa-calendar-alt me-2"></i>{{ today_date }}</h4>
-                    <small>Last 7 days analysis</small>
+                    <small>최근 7일간 불량 데이터 분석</small>
                 </div>
             </div>
         </div>
@@ -64,7 +71,7 @@
                             <i class="fas fa-exclamation-triangle fa-3x"></i>
                         </div>
                         <h3 class="text-primary">{{ total_defects }}</h3>
-                        <p class="text-muted mb-0">Total Defects (7 days)</p>
+                        <p class="text-muted mb-0">주간 불량 총합</p>
                     </div>
                 </div>
             </div>
@@ -75,18 +82,22 @@
                             <i class="fas fa-clock fa-3x"></i>
                         </div>
                         <h3 class="text-warning">{{ today_defects }}</h3>
-                        <p class="text-muted mb-0">Today's Defects</p>
+                        <p class="text-muted mb-0">금일 불량 건수</p>
                     </div>
                 </div>
             </div>
             <div class="col-md-3">
-                <div class="card stat-card border-0 shadow-sm">
+                <!-- <div class="card stat-card border-0 shadow-sm"> -->
+                <div class="card stat-card border-0 shadow-sm" 
+                    style="cursor: pointer;" 
+                    data-bs-toggle="modal" 
+                    data-bs-target="#defectTypeModal">
                     <div class="card-body text-center">
                         <div class="text-info mb-2">
                             <i class="fas fa-tags fa-3x"></i>
                         </div>
                         <h3 class="text-info">{{ defect_types }}</h3>
-                        <p class="text-muted mb-0">Defect Types</p>
+                        <p class="text-muted mb-0">불량 유형</p>
                     </div>
                 </div>
             </div>
@@ -97,7 +108,7 @@
                             <i class="fas fa-percentage fa-3x"></i>
                         </div>
                         <h3 class="text-success">{{ avg_confidence }}%</h3>
-                        <p class="text-muted mb-0">Avg Confidence</p>
+                        <p class="text-muted mb-0">평균 검출 신뢰도</p>
                     </div>
                 </div>
             </div>
@@ -107,81 +118,54 @@
         <div class="row">
             <div class="col-lg-8">
                 <div class="chart-container">
-                    <h4 class="mb-3"><i class="fas fa-chart-bar me-2"></i>Daily Defects Trend</h4>
+                    <h4 class="mb-3"><i class="fas fa-chart-bar me-2"></i>일별 불량 추이</h4>
                     <img src="data:image/png;base64,{{ daily_chart }}" class="img-fluid" alt="Daily Defects Chart">
                 </div>
             </div>
             <div class="col-lg-4">
                 <div class="chart-container">
-                    <h4 class="mb-3"><i class="fas fa-chart-pie me-2"></i>Defect Distribution</h4>
+                    <h4 class="mb-3"><i class="fas fa-chart-pie me-2"></i>불량 유형별 분포</h4>
                     <img src="data:image/png;base64,{{ pie_chart }}" class="img-fluid" alt="Defect Distribution">
                 </div>
             </div>
         </div>
 
-        <!-- Tables Row -->
-        <div class="row">
-            <div class="col-lg-6">
-                <div class="table-container">
-                    <h4 class="mb-3"><i class="fas fa-list me-2"></i>Recent Defects</h4>
-                    <div class="table-responsive">
-                        <table class="table table-hover">
-                            <thead class="table-dark">
-                                <tr>
-                                    <th>Time</th>
-                                    <th>Type</th>
-                                    <th>Confidence</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {% for _, row in recent_defects.iterrows() %}
-                                <tr>
-                                    <td>{{ row.timestamp.strftime('%m-%d %H:%M') }}</td>
-                                    <td><span class="badge bg-warning">{{ row.defect_type }}</span></td>
-                                    <td>{{ "%.2f"|format(row.confidence) }}</td>
-                                </tr>
-                                {% endfor %}
-                            </tbody>
-                        </table>
+    </div>
+
+    <!-- Modal -->
+    <div class="modal fade" id="defectTypeModal" tabindex="-1" aria-labelledby="defectTypeModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="defectTypeModalLabel">불량 유형</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="닫기"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-4">
+                            <img src="/static/sample_defect1.jpg" class="img-fluid rounded mb-2" alt="샘플1">
+                        </div>
+                        <div class="col-md-4">
+                            <img src="/static/sample_defect2.jpg" class="img-fluid rounded mb-2" alt="샘플2">
+                        </div>
                     </div>
                 </div>
-            </div>
-            <div class="col-lg-6">
-                <div class="table-container">
-                    <h4 class="mb-3"><i class="fas fa-chart-bar me-2"></i>Defect Statistics</h4>
-                    <div class="table-responsive">
-                        <table class="table table-hover">
-                            <thead class="table-dark">
-                                <tr>
-                                    <th>Defect Type</th>
-                                    <th>Count</th>
-                                    <th>Avg Confidence</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {% for _, row in defect_stats.iterrows() %}
-                                <tr>
-                                    <td><span class="badge bg-primary">{{ row.defect_type }}</span></td>
-                                    <td>{{ row.Count }}</td>
-                                    <td>{{ "%.3f"|format(row['Avg Confidence']) }}</td>
-                                </tr>
-                                {% endfor %}
-                            </tbody>
-                        </table>
-                    </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">닫기</button>
                 </div>
             </div>
         </div>
     </div>
+
 
     <!-- Footer -->
     <footer class="text-center py-4 mt-5">
         <div class="container">
             <small class="text-muted">
                 <i class="fas fa-sync-alt me-1"></i>
-                Last updated: {{ today_date }} | 
+                마지막 업데이트: {{ today_date }} | 
                 <i class="fas fa-database me-1"></i>
-                Data source: defect_log.txt
+                데이터소스: defect_log.txt
             </small>
         </div>
     </footer>
