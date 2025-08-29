@@ -55,7 +55,7 @@ def show_defect_log():
         flask_process = subprocess.Popen(["python", "flask_app.py"])
     webbrowser.open("http://127.0.0.1:5000/log")
 
-btn = ttk.Button(root, text="Show Defect Log", command=show_defect_log, takefocus=0)
+btn = ttk.Button(root, text="Show Defect Detection Dashboard", command=show_defect_log, takefocus=0)
 btn.pack(pady=10)
 
 # ======= 프레임 처리 함수 =======
